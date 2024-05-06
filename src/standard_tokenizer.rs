@@ -2,25 +2,30 @@ use std::fs;
 use std::collections::HashMap;
 use std::path::PathBuf;
 
-struct Path {
-    data: PathBuf,
-    merges: PathBuf
+pub struct Path {
+    pub data: PathBuf,
+    pub merges: PathBuf
 }
 
-struct Vocab {
-    size: u32
+pub struct Vocab {
+    pub size: u32
 }
 
-// pub trait Tokenizer {
-//     fn 
-// }
-
-struct BaseTokenizer {
-    path: Path,
-    vocab: Vocab
+pub struct BaseTokenizer {
+    pub path: Path,
+    pub vocab: Vocab
 }
 
 impl BaseTokenizer {
+
+    pub fn read_to_bytes(
+        path: PathBuf
+    ) -> Vec<u8> {
+        let file = fs::read_to_string(path)
+            .expect("Should have been a file here to read");
+        Vec::from(file.as_bytes())
+    }
+    
     // given a dictionary of token pairs and their corresponding new token id, recursively
     // loop through tokens to get the decoded token list
     pub fn decode(
@@ -82,9 +87,10 @@ impl BaseTokenizer {
     }
 
     pub fn encode(
-        mut tokens: Vec<u32>
+        mut tokens: Vec<u32>,
+        vocab: Vocab
     ) -> (Vec<u32>, HashMap<u32,(u32,u32)>) {
-        let vocab_size = 270;
+        let vocab_size = vocab.size;
         let num_merges = vocab_size - ((u8::MAX as u32) + 1);
         let mut merges: HashMap<u32, (u32, u32)> = HashMap::new(); 
     
