@@ -19,7 +19,7 @@ pub struct BaseTokenizer {
 impl BaseTokenizer {
 
     pub fn read_to_bytes(
-        path: PathBuf
+        path: &PathBuf
     ) -> Vec<u8> {
         let file = fs::read_to_string(path)
             .expect("Should have been a file here to read");
@@ -29,7 +29,7 @@ impl BaseTokenizer {
     // given a dictionary of token pairs and their corresponding new token id, recursively
     // loop through tokens to get the decoded token list
     pub fn decode(
-        tokens: Vec<u32>, 
+        tokens: &Vec<u32>, 
         merges: &HashMap<u32,(u32, u32)>
     ) -> Vec<u32> {
         let mut new_tokens: Vec<u32> = Vec::new();
