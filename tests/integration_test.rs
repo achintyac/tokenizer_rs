@@ -6,8 +6,8 @@ use tokenizer_rs;
 #[test]
 fn full_run_through() {
     let paths = tokenizer_rs::Path {
-        data: PathBuf::from("./foo.txt"),
-        merges: PathBuf::from("./merges.txt"),
+        data: PathBuf::from("./tests/foo.txt"),
+        merges: PathBuf::from("./tests/merges.txt"),
     };
 
     let vocab = tokenizer_rs::Vocab {
