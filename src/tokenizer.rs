@@ -42,7 +42,7 @@ pub trait Tokenizer {
                 i += 2;
             }
             else {
-                new_tokens.push(ids[i].into());
+                new_tokens.push(ids[i]);
                 i += 1;
             }
         }
@@ -65,17 +65,17 @@ pub trait Tokenizer {
     // loop through tokens to get the decoded token list
     fn decode(
         &self,
-        tokens: &Vec<u32>, 
+        tokens: &[u32],
         merges: &HashMap<u32,(u32, u32)>
     ) -> Vec<u32> {
         let mut new_tokens: Vec<u32> = Vec::new();
-        let mut temp_tokens: Vec<u32> = tokens.clone();
+        let mut temp_tokens: Vec<u32> = tokens.to_owned();
         let mut max_value = *tokens.iter().max().unwrap();
         while max_value > u8::MAX as u32 {
             new_tokens = Vec::new();
             for token in &temp_tokens {
                 if *token == max_value {
-                    let pair_encoding = merges.get(&token).unwrap(); // get matching token pair
+                    let pair_encoding = merges.get(token).unwrap(); // get matching token pair
                     new_tokens.push(pair_encoding.0);
                     new_tokens.push(pair_encoding.1);
                 } else {
@@ -103,10 +103,9 @@ pub trait Tokenizer {
             bytes_vec.sort_by(|a, b| b.1.cmp(a.1));
             let idx = 256 + i;
             let max_pair = bytes_vec[0].0;
-            tokens = self.merge(tokens, &max_pair, idx);
+            tokens = self.merge(tokens, max_pair, idx);
             merges.entry(idx).or_insert(*max_pair);
         }
         (tokens, merges)
     }
-
 }

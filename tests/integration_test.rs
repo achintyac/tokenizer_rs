@@ -20,8 +20,8 @@ fn full_run_through() {
         vocab: vocab
     };
 
-    let initial_tokens = tokenizer.read_to_bytes(&tokenizer.path.data);
-    let contents = utils::convert_to_u32(initial_tokens);
+    let initial_tokens: Vec<u8> = tokenizer.read_to_bytes(&tokenizer.path.data);
+    let contents: Vec<u32> = utils::convert_to_u32(initial_tokens);
     let (contents, merges) = tokenizer.encode(contents, &tokenizer.vocab);
     let contents_new = tokenizer.decode(&contents, &merges);
     let ans = utils::convert_to_u8(contents_new);
@@ -48,5 +48,5 @@ fn file_does_not_exist() {
         vocab: vocab
     };
 
-    let _initial_tokens = utils::read_to_bytes(&tokenizer.path.data);
+    let _initial_tokens = tokenizer.read_to_bytes(&tokenizer.path.data);
 }

@@ -1,4 +1,3 @@
-use std::fs;
 use std::path::PathBuf;
 
 pub struct Path {
@@ -8,14 +7,6 @@ pub struct Path {
 
 pub struct Vocab {
     pub size: u32
-}
-
-pub fn read_to_bytes(
-    path: &PathBuf
-) -> Vec<u8> {
-    let file = fs::read_to_string(path)
-        .expect("Should have been a file here to read");
-    Vec::from(file.as_bytes())
 }
 
 pub fn convert_to_u32(
