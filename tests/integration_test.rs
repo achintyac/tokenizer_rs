@@ -20,10 +20,10 @@ fn full_run_through() {
         vocab: vocab
     };
 
-    let initial_tokens = utils::read_to_bytes(&tokenizer.path.data);
+    let initial_tokens = tokenizer.read_to_bytes(&tokenizer.path.data);
     let contents = utils::convert_to_u32(initial_tokens);
-    let (contents, merges) = tokenizer_naive::BaseTokenizer::encode(contents, tokenizer.vocab);
-    let contents_new = tokenizer_naive::BaseTokenizer::decode(&contents, &merges);
+    let (contents, merges) = tokenizer.encode(contents, &tokenizer.vocab);
+    let contents_new = tokenizer.decode(&contents, &merges);
     let ans = utils::convert_to_u8(contents_new);
 
     let original_contents = fs::read_to_string(tokenizer.path.data).expect("Should have been a file here to read");
