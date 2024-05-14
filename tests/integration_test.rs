@@ -1,8 +1,8 @@
-use std::path::PathBuf;
 use std::fs;
+use std::path::PathBuf;
 
-use tokenizer_rs::{tokenizer_naive, utils};
 use tokenizer_rs::tokenizer::Tokenizer;
+use tokenizer_rs::{tokenizer_naive, utils};
 
 #[test]
 fn full_run_through() {
@@ -11,13 +11,11 @@ fn full_run_through() {
         merges: PathBuf::from("./tests/merges.txt"),
     };
 
-    let vocab = utils::Vocab {
-        size: 280
-    };
+    let vocab = utils::Vocab { size: 280 };
 
     let tokenizer = tokenizer_naive::BaseTokenizer {
         path: paths,
-        vocab: vocab
+        vocab: vocab,
     };
 
     let initial_tokens: Vec<u8> = tokenizer.read_to_bytes(&tokenizer.path.data);
@@ -26,7 +24,8 @@ fn full_run_through() {
     let contents_new = tokenizer.decode(&contents, &merges);
     let ans = utils::convert_to_u8(contents_new);
 
-    let original_contents = fs::read_to_string(tokenizer.path.data).expect("Should have been a file here to read");
+    let original_contents =
+        fs::read_to_string(tokenizer.path.data).expect("Should have been a file here to read");
     let final_converted_ans = String::from_utf8(ans).unwrap();
     assert_eq!(original_contents, final_converted_ans);
 }
@@ -39,13 +38,11 @@ fn file_does_not_exist() {
         merges: PathBuf::from("./tests/merges.txt"),
     };
 
-    let vocab = utils::Vocab {
-        size: 280
-    };
+    let vocab = utils::Vocab { size: 280 };
 
     let tokenizer = tokenizer_naive::BaseTokenizer {
         path: paths,
-        vocab: vocab
+        vocab: vocab,
     };
 
     let _initial_tokens = tokenizer.read_to_bytes(&tokenizer.path.data);
