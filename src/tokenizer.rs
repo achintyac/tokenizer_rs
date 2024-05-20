@@ -1,11 +1,12 @@
 use std::collections::HashMap;
 use std::fs::read_to_string;
 use std::path::PathBuf;
-
+use fancy_regex::Regex;
 use crate::utils::Vocab;
 
 // Base trait for all tokenizers
 pub trait Tokenizer {
+
     // process data
     fn process_data(&self, data: String) -> String {
         data
@@ -77,6 +78,79 @@ pub trait Tokenizer {
 
         for i in 0..num_merges {
             let bytes = self.get_counts(&tokens);
+            let mut bytes_vec: Vec<(&(u32, u32), &u32)> = bytes.iter().collect(); // sort bytes into pairs by the descending order of occurrence
+            bytes_vec.sort_by(|a, b| b.1.cmp(a.1));
+            let idx = 256 + i;
+            let max_pair = bytes_vec[0].0;
+            tokens = self.merge(tokens, max_pair, idx);
+            merges.entry(idx).or_insert(*max_pair);
+        }
+        (tokens, merges)
+    }
+}
+
+
+pub trait TokenizerRegex {
+
+    fn process_data_chunk(&self, regex_pattern: &String, data: String) -> Vec<String> {
+        let mut parsed_contents: Vec<String> = Vec::new();
+        let re = Regex::new(regex_pattern).expect("Unable to create regex for given pattern");
+        for mat in re.find_iter(&data) {
+            let piece = mat.unwrap().as_str();
+            parsed_contents.push(piece.to_string())
+        }
+        parsed_contents
+    }
+
+    //TODO: Finish implementation of all of the remaining functions
+
+    // count the number of occurrences of each token pair
+    fn get_counts(&self, ids: &[u32], counts: Option<HashMap<(u32, u32), u32>>) -> HashMap<(u32, u32), u32> {
+        if let Some(mut dic) = counts {
+            for idx in 1..ids.len() {
+                dic
+                    .entry((ids[idx - 1], ids[idx]))
+                    .and_modify(|counter| *counter += 1)
+                    .or_insert(1);
+            }
+            dic
+        } else {
+            let mut counts: HashMap<(u32, u32), u32> = HashMap::new();
+            for idx in 1..ids.len() {
+                counts
+                    .entry((ids[idx - 1], ids[idx]))
+                    .and_modify(|counter| *counter += 1)
+                    .or_insert(1);
+            }
+            counts
+        }
+    }
+
+    // take tokens (decimal representation of bytes) and find all existence of token tuples (pairs) replace them with idx
+    fn merge(&self, ids: Vec<u32>, pair: &(u32, u32), idx: u32) -> Vec<u32> {
+        let mut new_tokens: Vec<u32> = Vec::new();
+        let mut i = 0;
+        let length = ids.len();
+        while i < length {
+            if i < length - 1 && ids[i] == pair.0 && ids[i + 1] == pair.1 {
+                new_tokens.push(idx);
+                i += 2;
+            } else {
+                new_tokens.push(ids[i]);
+                i += 1;
+            }
+        }
+        new_tokens
+    }
+
+    // given a vector of tokens generate a mutates list of tokens with the desired encoding and the record of all merges to generate new token ids
+    fn encode(&self, mut tokens: Vec<u32>, vocab: &Vocab) -> (Vec<u32>, HashMap<u32, (u32, u32)>) {
+        let vocab_size = vocab.size;
+        let num_merges = vocab_size - ((u8::MAX as u32) + 1);
+        let mut merges: HashMap<u32, (u32, u32)> = HashMap::new();
+
+        for i in 0..num_merges {
+            let bytes = self.get_counts(&tokens, None); //let bytes = self.get_counts(&tokens);
             let mut bytes_vec: Vec<(&(u32, u32), &u32)> = bytes.iter().collect(); // sort bytes into pairs by the descending order of occurrence
             bytes_vec.sort_by(|a, b| b.1.cmp(a.1));
             let idx = 256 + i;

@@ -5,7 +5,7 @@ use tokenizer_rs::tokenizer::Tokenizer;
 use tokenizer_rs::{tokenizer_naive, utils};
 
 #[test]
-fn full_run_through() {
+fn full_test_base_tokenizer() {
     let paths = utils::Path {
         data: PathBuf::from("./tests/foo.txt"),
         merges: PathBuf::from("./tests/merges.txt"),
