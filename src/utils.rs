@@ -17,6 +17,13 @@ pub fn convert_to_u32(tokens: Vec<u8>) -> Vec<u32> {
     tokens_converted
 }
 
+pub fn convert_to_u32_nested(tokens: Vec<Vec<u8>>) -> Vec<Vec<u32>> {
+    tokens
+        .iter()
+        .map(|inner_vec| inner_vec.iter().map(|u8_val| *u8_val as u32).collect())
+        .collect()
+}
+
 pub fn convert_to_u8(tokens: Vec<u32>) -> Vec<u8> {
     let mut tokens_converted: Vec<u8> = Vec::new();
     for token in tokens {
