@@ -93,7 +93,7 @@ pub trait Tokenizer {
 pub trait TokenizerRegex {
 
     // split data into chunks using the desired regex command
-    fn process_data_chunk(&self, regex_pattern: &String, data: String) -> Vec<String> {
+    fn process_data_chunk(&self, regex_pattern: &str, data: String) -> Vec<String> {
         let mut parsed_contents: Vec<String> = Vec::new();
         let re = Regex::new(regex_pattern).expect("Unable to create regex for given pattern");
         for mat in re.find_iter(&data) {
@@ -104,14 +104,14 @@ pub trait TokenizerRegex {
     }
 
     // read in data for processing
-    fn read_chunks_to_bytes(&self, regex_pattern: &String, path: &PathBuf) -> Vec<Vec<u8>> {
+    fn read_chunks_to_bytes(&self, regex_pattern: &str, path: &PathBuf) -> Vec<Vec<u8>> {
         let contents = read_to_string(path).expect("Should have been a file here to read");
         let data = self.process_data_chunk(regex_pattern, contents);
         data.iter().map(|x| Vec::from(x.as_bytes())).collect()
     }
 
    // take tokens (decimal representation of bytes) and find all existence of token tuples (pairs) replace them with idx
-   fn merge(&self, ids: &Vec<u32>, pair: &(u32, u32), idx: u32) -> Vec<u32> {
+   fn merge(&self, ids: &[u32], pair: &(u32, u32), idx: u32) -> Vec<u32> {
     let mut new_tokens: Vec<u32> = Vec::new();
     let mut i = 0;
     let length = ids.len();
