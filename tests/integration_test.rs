@@ -94,4 +94,3 @@ fn file_does_not_exist_gpt4() {
     let _nitial_tokens = tokenizer.read_chunks_to_bytes(&tokenizer.regex_pattern, &tokenizer.path.data);
 
 }
-
