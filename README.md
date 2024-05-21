@@ -56,7 +56,7 @@ tokenizer_rs = { path = "/path/to/tokenizer_rs" }
 ```
 
 ## Test/examples
-You can see how to use the library at  `integration_test.rs`.
+You can see how to use the library at  `tests/integration_test.rs`.
 
 
 ## Contributing
