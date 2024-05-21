@@ -1,12 +1,11 @@
+use crate::utils::Vocab;
+use fancy_regex::Regex;
 use std::collections::HashMap;
 use std::fs::read_to_string;
 use std::path::PathBuf;
-use fancy_regex::Regex;
-use crate::utils::Vocab;
 
 /// Base trait for all tokenizers
 pub trait Tokenizer {
-
     /// Process data
     fn process_data(&self, data: String) -> String {
         data
@@ -71,7 +70,7 @@ pub trait Tokenizer {
         new_tokens
     }
 
-    /// Given a vector of tokens generate a mutates list of tokens with the desired encoding 
+    /// Given a vector of tokens generate a mutates list of tokens with the desired encoding
     /// and the record of all merges to generate new token ids
     fn encode(&self, mut tokens: Vec<u32>, vocab: &Vocab) -> (Vec<u32>, HashMap<u32, (u32, u32)>) {
         let vocab_size = vocab.size;
@@ -92,7 +91,6 @@ pub trait Tokenizer {
 }
 
 pub trait TokenizerRegex {
-
     /// Split data into chunks using the desired regex command
     fn process_data_chunk(&self, regex_pattern: &str, data: String) -> Vec<String> {
         let mut parsed_contents: Vec<String> = Vec::new();
@@ -123,8 +121,9 @@ pub trait TokenizerRegex {
             } else {
                 new_tokens.push(ids[i]);
                 i += 1;
-            }}
-    new_tokens
+            }
+        }
+        new_tokens
     }
 
     /// Count the number of occurrences of each token pair
@@ -164,9 +163,13 @@ pub trait TokenizerRegex {
         new_tokens
     }
 
-    /// Given a vector of tokens generate a mutates list of tokens with the desired encoding 
+    /// Given a vector of tokens generate a mutates list of tokens with the desired encoding
     /// and the record of all merges to generate new token ids
-    fn encode(&self, mut tokens: Vec<Vec<u32>>, vocab: &Vocab) -> (Vec<u32>, HashMap<u32, (u32, u32)>) {
+    fn encode(
+        &self,
+        mut tokens: Vec<Vec<u32>>,
+        vocab: &Vocab,
+    ) -> (Vec<u32>, HashMap<u32, (u32, u32)>) {
         let vocab_size = vocab.size;
         let num_merges = vocab_size - ((u8::MAX as u32) + 1);
         let mut merges: HashMap<u32, (u32, u32)> = HashMap::new();
@@ -177,7 +180,10 @@ pub trait TokenizerRegex {
             bytes_vec.sort_by(|a, b| b.1.cmp(a.1));
             let idx = 256 + i;
             let max_pair = bytes_vec[0].0;
-            tokens = tokens.iter().map(|x| self.merge(x, max_pair, idx)).collect();
+            tokens = tokens
+                .iter()
+                .map(|x| self.merge(x, max_pair, idx))
+                .collect();
             merges.entry(idx).or_insert(*max_pair);
         }
         let tokens_flattened: Vec<u32> = tokens.into_iter().flatten().collect();

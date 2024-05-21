@@ -20,19 +20,21 @@ mod tests {
             data: PathBuf::from("./tests/foo.txt"),
             merges: PathBuf::from("./tests/merges.txt"),
         };
-    
+
         let vocab = Vocab { size: 280 };
-    
+
         let tokenizer = GPT4Tokenizer {
             path: paths,
             vocab: vocab,
-            regex_pattern: String::from(r"'(?i:[sdmt]|ll|ve|re)|[^\r\n\p{L}\p{N}]?+\p{L}+|\p{N}{1,3}| ?[^\s\p{L}\p{N}]++[\r\n]*|\s*[\r\n]|\s+(?!\S)|\s+"),
+            regex_pattern: String::from(
+                r"'(?i:[sdmt]|ll|ve|re)|[^\r\n\p{L}\p{N}]?+\p{L}+|\p{N}{1,3}| ?[^\s\p{L}\p{N}]++[\r\n]*|\s*[\r\n]|\s+(?!\S)|\s+",
+            ),
         };
 
         let result = tokenizer.process_data_chunk(
             &tokenizer.regex_pattern,
             String::from("Sherlock Holmes ran 22 miles"),
         );
-        assert_eq!(result, ["Sherlock", " Holmes", " ran",  " ", "22", " miles"]);
+        assert_eq!(result, ["Sherlock", " Holmes", " ran", " ", "22", " miles"]);
     }
 }
