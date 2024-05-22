@@ -37,6 +37,7 @@ fn run_through_regex_tokenizer() {
     };
 
     let vocab = utils::Vocab { size: 280 };
+    let gpt4_special_tokens = tokenizer_gpt4::GPT4SpecialTokens::new();
 
     let tokenizer = tokenizer_gpt4::GPT4Tokenizer {
         path: paths,
@@ -44,6 +45,7 @@ fn run_through_regex_tokenizer() {
         regex_pattern: String::from(
             r"'(?i:[sdmt]|ll|ve|re)|[^\r\n\p{L}\p{N}]?+\p{L}+|\p{N}{1,3}| ?[^\s\p{L}\p{N}]++[\r\n]*|\s*[\r\n]|\s+(?!\S)|\s+",
         ),
+        special_tokens: gpt4_special_tokens,
     };
 
     let initial_tokens =
@@ -87,6 +89,7 @@ fn file_does_not_exist_gpt4() {
     };
 
     let vocab = utils::Vocab { size: 280 };
+    let gpt4_special_tokens = tokenizer_gpt4::GPT4SpecialTokens::new();
 
     let tokenizer = tokenizer_gpt4::GPT4Tokenizer {
         path: paths,
@@ -94,6 +97,7 @@ fn file_does_not_exist_gpt4() {
         regex_pattern: String::from(
             r"'(?i:[sdmt]|ll|ve|re)|[^\r\n\p{L}\p{N}]?+\p{L}+|\p{N}{1,3}| ?[^\s\p{L}\p{N}]++[\r\n]*|\s*[\r\n]|\s+(?!\S)|\s+",
         ),
+        special_tokens: gpt4_special_tokens,
     };
 
     let _nitial_tokens =
